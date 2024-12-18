@@ -591,7 +591,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 13.28.sp,
-                color: const Color(0xFF3C3C43).withOpacity(0.3),
+                color: const Color.fromRGBO(60, 60, 67, 0.3),
               )),
         ),
       );
@@ -624,7 +624,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                     ? Colors.white
                     : DateFormat("DD MM YY").format(date) ==
                             DateFormat("DD MM YY").format(_startDate!)
-                        ? const Color(0xFF1947E5).withOpacity(0.2)
+                        ? const Color.fromRGBO(25, 71, 229, 0.2)
                         : Colors.white, // Цвет для дней текущего месяца
               ),
               child: Center(

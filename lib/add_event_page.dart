@@ -879,7 +879,7 @@ class _AddEventPageState extends State<AddEventPage> {
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 13.28.sp,
-                color: const Color(0xFF3C3C43).withOpacity(0.3),
+                color: const Color.fromRGBO(60, 60, 67, 0.3),
               )),
         ),
       );
@@ -912,7 +912,7 @@ class _AddEventPageState extends State<AddEventPage> {
                     ? Colors.white
                     : DateFormat("DD MM YY").format(date) ==
                             DateFormat("DD MM YY").format(_startDate!)
-                        ? const Color(0xFF1947E5).withOpacity(0.2)
+                        ? const Color.fromRGBO(25, 71, 229, 0.2)
                         : Colors.white, // Цвет для дней текущего месяца
               ),
               child: Center(
@@ -953,7 +953,7 @@ class CustomWidgets {
           borderRadius: BorderRadius.all(Radius.circular(10.r)),
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withOpacity(0.25),
+                color: const Color.fromRGBO(0, 0, 0, 0.25),
                 offset: Offset(0, 4.h),
                 blurRadius: 4)
           ]),
@@ -1190,8 +1190,7 @@ class CustomWidgets {
                                   style: TextStyle(
                                     color: currentName == item
                                         ? Colors.black
-                                        : const Color(0xFF06110A)
-                                            .withOpacity(0.5),
+                                        : const Color.fromRGBO(6, 17, 10, 0.5),
                                   ),
                                 ),
                               ),

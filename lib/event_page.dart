@@ -117,8 +117,8 @@ class _EventPageState extends State<EventPage> {
                                           Radius.circular(10.r)),
                                       boxShadow: [
                                         BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.25),
+                                            color: const Color.fromRGBO(
+                                                0, 0, 0, 0.25),
                                             offset: Offset(0, 4.h),
                                             blurRadius: 4)
                                       ]),
@@ -341,8 +341,8 @@ class _EventPageState extends State<EventPage> {
                                                   borderRadius:
                                                       BorderRadius.circular(4),
                                                   // ignore: prefer_const_constructors
-                                                  color: Color(0xFFEDEDED)
-                                                      .withOpacity(0.9),
+                                                  color: Color.fromRGBO(
+                                                      237, 237, 237, 0.9),
                                                 ),
                                                 offset: const Offset(0, -10),
                                               ),

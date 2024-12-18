@@ -110,7 +110,7 @@ menuBtn(String description, Color container, Color text) {
         borderRadius: BorderRadius.all(Radius.circular(10.r)),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.25),
+              color: const Color.fromRGBO(0, 0, 0, 0.25),
               offset: Offset(0, 4.h),
               blurRadius: 4)
         ]),

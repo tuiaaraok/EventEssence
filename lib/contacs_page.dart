@@ -111,8 +111,8 @@ class _ContacsPageState extends State<ContacsPage> {
                                           Radius.circular(10.r)),
                                       boxShadow: [
                                         BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.25),
+                                            color: const Color.fromRGBO(
+                                                0, 0, 0, 0.25),
                                             offset: Offset(0, 4.h),
                                             blurRadius: 4)
                                       ]),
@@ -293,8 +293,8 @@ class _ContacsPageState extends State<ContacsPage> {
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(4),
-                                                  color: const Color(0xFFEDEDED)
-                                                      .withOpacity(0.9),
+                                                  color: const Color.fromRGBO(
+                                                      237, 237, 237, 0.9),
                                                 ),
                                                 offset: const Offset(0, -10),
                                               ),
