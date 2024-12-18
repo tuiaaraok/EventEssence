@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         splitScreenMode: true,
         builder: (_, child) {
           return ValueListenableBuilder<Box>(
-              valueListenable: Hive.box('settings').listenable(),
+              valueListenable: Hive.box('Settings').listenable(),
               builder: (context, box, _) {
                 return ChangeNotifierProvider(
                   create: (_) => ThemeProvider(box),
