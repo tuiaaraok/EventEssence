@@ -8,7 +8,7 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.antiqueatlas.WV58Application # bundle
+        bundle_identifier: com.EventEssence.WV80Application # bundle
       vars:
         APP_ID:  6738952934 # APP ID here
       flutter: stable
