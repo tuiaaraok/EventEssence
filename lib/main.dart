@@ -20,6 +20,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Hive.initFlutter(); // Инициализация Hive
+  await Hive.openBox("privacyLink");
   await Hive.openBox("Settings");
   Hive.registerAdapter(EventsModelAdapter());
   Hive.registerAdapter(TaskModelAdapter());
@@ -57,34 +58,35 @@ class MyApp extends StatelessWidget {
                   child:
                       Consumer<ThemeProvider>(builder: (context, provider, _) {
                     return MaterialApp(
-                        title: 'Flutter Demo',
-                        debugShowCheckedModeBanner: false,
-                        // onGenerateRoute: NavigationApp.generateRoute,
+                      title: 'Flutter Demo',
+                      debugShowCheckedModeBanner: false,
+                      // onGenerateRoute: NavigationApp.generateRoute,
 
-                        theme: ThemeData(
-                          scaffoldBackgroundColor: const Color(0xFFF5FAFF),
-                          appBarTheme: const AppBarTheme(
-                              backgroundColor: Colors.transparent,
-                              systemOverlayStyle: SystemUiOverlayStyle.dark),
-                        ),
-                        darkTheme: ThemeData(
-                          scaffoldBackgroundColor: const Color(0xFF121212),
-                          brightness: Brightness.dark,
-                        ),
-                        themeMode: provider.isDarkMode
-                            ? ThemeMode.dark
-                            : ThemeMode.light,
-                        home: Hive.box("privacyLink").isEmpty
-                            ? WebViewScreen(
-                                link: link,
-                              )
-                            : Hive.box("privacyLink")
-                                    .get('link')
-                                    .contains("showAgreebutton")
-                                ? const MenuPage()
-                                : WebViewScreen(
-                                    link: link,
-                                  ));
+                      theme: ThemeData(
+                        scaffoldBackgroundColor: const Color(0xFFF5FAFF),
+                        appBarTheme: const AppBarTheme(
+                            backgroundColor: Colors.transparent,
+                            systemOverlayStyle: SystemUiOverlayStyle.dark),
+                      ),
+                      darkTheme: ThemeData(
+                        scaffoldBackgroundColor: const Color(0xFF121212),
+                        brightness: Brightness.dark,
+                      ),
+                      themeMode: provider.isDarkMode
+                          ? ThemeMode.dark
+                          : ThemeMode.light,
+                      home: Hive.box("privacyLink").isEmpty
+                          ? WebViewScreen(
+                              link: link,
+                            )
+                          : Hive.box("privacyLink")
+                                  .get('link')
+                                  .contains("showAgreebutton")
+                              ? const MenuPage()
+                              : WebViewScreen(
+                                  link: link,
+                                ),
+                    );
                   }),
                 );
               });
@@ -94,43 +96,41 @@ class MyApp extends StatelessWidget {
 
 Future<String> _initializeRemoteConfig() async {
   final remoteConfig = FirebaseRemoteConfig.instance;
-  var box = await Hive.openBox('privacyLink');
+
   String link = '';
 
-  if (box.isEmpty) {
+  if (Hive.box("privacyLink").isEmpty) {
     await remoteConfig.setConfigSettings(RemoteConfigSettings(
       fetchTimeout: const Duration(minutes: 1),
       minimumFetchInterval: const Duration(minutes: 1),
     ));
 
-    // Defaults setup
-
     try {
       await remoteConfig.fetchAndActivate();
-
       link = remoteConfig.getString("link");
     } catch (e) {
       log("Failed to fetch remote config: $e");
     }
   } else {
-    if (box.get('link').contains("showAgreebutton")) {
+    if (Hive.box("privacyLink").get('link').contains("showAgreebutton")) {
       await remoteConfig.setConfigSettings(RemoteConfigSettings(
         fetchTimeout: const Duration(minutes: 1),
         minimumFetchInterval: const Duration(minutes: 1),
       ));
 
       try {
-        await remoteConfig.fetchAndActivate();
+        await remoteConfig.fetchAndActivate().whenComplete(() {
+          link = remoteConfig.getString("link");
 
-        link = remoteConfig.getString("link");
+          if (!link.contains("showAgreebutton") && link.isNotEmpty) {
+            Hive.box("privacyLink").put('link', link);
+          }
+        });
       } catch (e) {
         log("Failed to fetch remote config: $e");
       }
-      if (!link.contains("showAgreebutton")) {
-        box.put('link', link);
-      }
     } else {
-      link = box.get('link');
+      link = Hive.box("privacyLink").get('link');
     }
   }
 
@@ -157,9 +157,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   void initState() {
     super.initState();
-    if (Hive.box("privacyLink").isEmpty) {
-      Hive.box("privacyLink").put('link', widget.link);
-    }
 
     _initializeWebView(widget.link); // Initialize WebViewController
   }
@@ -194,13 +191,15 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top),
         child: Stack(children: [
           WebViewWidget(controller: controller),
-          if (loadAgree)
-            GestureDetector(
+          if (loadAgree) ...[
+            if (widget.link.contains("showAgreebutton")) ...[
+              GestureDetector(
                 onTap: () async {
                   await Hive.openBox('privacyLink').then((box) {
                     box.put('link', widget.link);
@@ -213,19 +212,20 @@ class _WebViewScreenState extends State<WebViewScreen> {
                     );
                   });
                 },
-                child: widget.link.contains("showAgreebutton")
-                    ? Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: Container(
-                            width: 200,
-                            height: 60,
-                            color: Colors.amber,
-                            child: const Center(child: Text("AGREE")),
-                          ),
-                        ))
-                    : null),
+                child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: Container(
+                        width: 200,
+                        height: 60,
+                        color: Colors.amber,
+                        child: const Center(child: Text("AGREE")),
+                      ),
+                    )),
+              )
+            ]
+          ]
         ]),
       ),
     );
